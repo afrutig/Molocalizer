@@ -6,8 +6,7 @@ function varargout = Molocalizer(varargin)
 % MOLOCALIZER MATLAB code for Molocalizer.fig
 %      MOLOCALIZER, by itself, creates a new MOLOCALIZER or raises the existing
 %      singleton*.
-%
-%      H = MOLOCALIZER returns the handle to a new MOLOCALIZER or the handle to
+%ptionsMOLOCALIZER or the handle to
 %      the existing singleton*.
 %
 %      MOLOCALIZER('CALLBACK',hObject,eventData,handles,...) calls the local
@@ -26,7 +25,7 @@ function varargout = Molocalizer(varargin)
 
 % Edit the above text to modify the response to help Molocalizer
 
-% Last Modified by GUIDE v2.5 30-Oct-2015 15:53:37
+% Last Modified by GUIDE v2.5 17-Jan-2016 10:34:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -194,7 +193,6 @@ names = fieldnames(handles);
 for i=1:length(names)
 
     name = names{i};
-
 
     if (isa(getfield(handles,name),'matlab.ui.Figure') || isa(getfield(handles,name),'matlab.ui.container.Menu') || isa(getfield(handles,name),'matlab.ui.container.ContextMenu') ...    
         || isa(getfield(handles,name),'matlab.ui.container.Panel') || isa(getfield(handles,name),'matlab.graphics.axis.Axes') || isa(getfield(handles,name),'matlab.ui.control.UIControl'))
@@ -365,6 +363,7 @@ function Start_Dynamic_Plotting_Callback(hObject, eventdata, handles)
 
 % get the file list from the directory:
 set(handles.Stop_dynamic_plotting,'UserData',true);
+
 handles = update_Datavisualization(handles);
 
 while get(handles.Stop_dynamic_plotting,'UserData')
@@ -1646,3 +1645,28 @@ save(strcat(handles.path,'/../Normalization_data/algorithms.mat'),'algorithms','
 Norm_Conc = handles.Norm_Conc;
 
 save(strcat(handles.path,'/../Normalization_data/Norm_conc.mat'),'Norm_Conc');
+
+
+% --------------------------------------------------------------------
+function Logging_Callback(hObject, eventdata, handles)
+% hObject    handle to Logging (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Start_Injection_logging_Callback(hObject, eventdata, handles)
+% hObject    handle to Start_Injection_logging (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% This function calls the injection logging script in order to log the data
+% from the autosampler.
+
+% run an external matlab script in an external matlab session in the background
+a = sprintf('matlab  -r -nosplash -nodesktop "addpath(genpath(pwd));log_injection(''%s'')" &',handles.path);
+
+unix(a)
+
+
+

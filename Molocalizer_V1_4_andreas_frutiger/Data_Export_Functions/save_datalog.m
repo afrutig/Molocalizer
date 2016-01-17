@@ -6,9 +6,6 @@ for i=1:length(handles.Consolecontent)
 
     fprintf(fid, '%s\n', handles.Consolecontent{i});
 
-    
-    
-    
 end
 
 fclose(fid);
