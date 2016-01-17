@@ -1311,8 +1311,12 @@ for i = 1:length(algorithms)
     % the signal is here 
     if isfield(handles.molo_algo_data.(algorithms{i})(1,1),'signal')
         
-        
-   
+        % for the standard algorithm Volker did not want to have the
+        % algorithm labeling, here is a workaround
+        if algorithms{i} == 'iter_sig_area_inc_3std'
+           
+            
+        end
         
         export_signals(handles,algorithms{i});
         export_background_signals(handles,algorithms{i});

@@ -36,7 +36,13 @@ function export_chemical_integrities(handles,algorithm)
     legend boxoff
     xlabel('Horizontal Position of molograms');
     ylabel('Chemical Integrity []');
-    
+    % for the standard algorithm Volker did not want to have the
+    % algorithm labeling, here is a workaround
+    if strcmp(algorithm,'iter_sig_area_inc_3std')
+           
+         algorithm = '';
+            
+    end
     name = strcat(handles.path,'/Evaluation/Plots/', algorithm, '_chemical_integrities.png');
     
     print(figure1,name,'-dpng')

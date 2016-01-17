@@ -50,6 +50,15 @@ function export_signals(handles,algorithm)
     legend boxoff
     hold off;
     handles.experiment_name
+    
+    % for the standard algorithm Volker did not want to have the
+    % algorithm labeling, here is a workaround
+    if strcmp(algorithm,'iter_sig_area_inc_3std')
+           
+         algorithm = '';
+            
+    end
+    
     name = strcat(handles.path,'/Evaluation/Plots/', handles.experiment_name, '_', algorithm, '_signals.png');
     
     print(figure1,name,'-dpng')

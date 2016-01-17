@@ -49,7 +49,13 @@ function export_background_signals(handles,algorithm)
     legend(h,'Location','NorthWest');
     legend boxoff
     hold off;
-    
+    % for the standard algorithm Volker did not want to have the
+    % algorithm labeling, here is a workaround
+    if strcmp(algorithm,'iter_sig_area_inc_3std')
+           
+         algorithm = '';
+            
+    end
     name = strcat(handles.path,'/Evaluation/Plots/', handles.experiment_name, '_', algorithm, '_background.png');
     
     print(figure1,name,'-dpng')
