@@ -1,0 +1,137 @@
+>> Molocalizer
+Error using catdirs (line 23)
+All arguments must be strings.
+
+Error in addpath (line 63)
+p = catdirs(varargin{1:n});
+
+Error in Molocalizer>Load_Experiment_Callback (line 1241)
+        addpath(handles.path);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in Molocalizer (line 46)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in @(hObject,eventdata)Molocalizer('Load_Experiment_Callback',hObject,eventdata,guidata(hObject))
+
+ 
+Error while evaluating Menu Callback
+
+
+handles = 
+
+                 pixelsize: 12.5000
+                 radius_um: 350
+                    radius: 28
+                   figure1: [1x1 Figure]
+                  uipanel2: [1x1 Panel]
+          Select_Molo_Area: [1x1 UIControl]
+     Pixelsize_static_text: [1x1 UIControl]
+                 Pixelsize: [1x1 UIControl]
+    MoloLocationsConfirmed: [1x1 Panel]
+         Delete_a_position: [1x1 UIControl]
+            Add_a_position: [1x1 UIControl]
+               pushbutton5: [1x1 UIControl]
+                     text5: [1x1 UIControl]
+            image_selector: [1x1 UIControl]
+    Confirm_Molo_Selection: [1x1 UIControl]
+                     text3: [1x1 UIControl]
+          Threshold_Slider: [1x1 UIControl]
+                     axes1: [1x1 Axes]
+                    output: [1x1 Figure]
+                      path: 'Y:\ZeptoDATA\Images\Xueying\20151019\B5\11_SAv-DNA_1-2_cDNA_regen'
+
+
+handles = 
+
+                 pixelsize: 12.5000
+                 radius_um: 350
+                    radius: 28
+                   figure1: [1x1 Figure]
+                  uipanel2: [1x1 Panel]
+          Select_Molo_Area: [1x1 UIControl]
+     Pixelsize_static_text: [1x1 UIControl]
+                 Pixelsize: [1x1 UIControl]
+    MoloLocationsConfirmed: [1x1 Panel]
+         Delete_a_position: [1x1 UIControl]
+            Add_a_position: [1x1 UIControl]
+               pushbutton5: [1x1 UIControl]
+                     text5: [1x1 UIControl]
+            image_selector: [1x1 UIControl]
+    Confirm_Molo_Selection: [1x1 UIControl]
+                     text3: [1x1 UIControl]
+          Threshold_Slider: [1x1 UIControl]
+                     axes1: [1x1 Axes]
+                    output: [1x1 Figure]
+                      path: 'Y:\ZeptoDATA\Images\Xueying\20151019\B5\11_SAv-DNA_1-2_cDNA_regen'
+                 filenames: [1400x1 struct]
+             current_image: [766x510 uint16]
+          points_to_delete: {}
+
+
+handles = 
+
+                 pixelsize: 12.5000
+                 radius_um: 350
+                    radius: 28
+                   figure1: [1x1 Figure]
+                  uipanel2: [1x1 Panel]
+          Select_Molo_Area: [1x1 UIControl]
+     Pixelsize_static_text: [1x1 UIControl]
+                 Pixelsize: [1x1 UIControl]
+    MoloLocationsConfirmed: [1x1 Panel]
+         Delete_a_position: [1x1 UIControl]
+            Add_a_position: [1x1 UIControl]
+               pushbutton5: [1x1 UIControl]
+                     text5: [1x1 UIControl]
+            image_selector: [1x1 UIControl]
+    Confirm_Molo_Selection: [1x1 UIControl]
+                     text3: [1x1 UIControl]
+          Threshold_Slider: [1x1 UIControl]
+                     axes1: [1x1 Axes]
+                    output: [1x1 Figure]
+                      path: 'Y:\ZeptoDATA\Images\Xueying\20151019\B5\11_SAv-DNA_1-2_cDNA_regen'
+                 filenames: [1400x1 struct]
+             current_image: [766x510 uint16]
+          points_to_delete: {}
+             points_to_add: {}
+
+
+handles = 
+
+                 pixelsize: 12.5000
+                 radius_um: 350
+                    radius: 28
+                   figure1: [1x1 Figure]
+                  uipanel2: [1x1 Panel]
+          Select_Molo_Area: [1x1 UIControl]
+     Pixelsize_static_text: [1x1 UIControl]
+                 Pixelsize: [1x1 UIControl]
+    MoloLocationsConfirmed: [1x1 Panel]
+         Delete_a_position: [1x1 UIControl]
+            Add_a_position: [1x1 UIControl]
+               pushbutton5: [1x1 UIControl]
+                     text5: [1x1 UIControl]
+            image_selector: [1x1 UIControl]
+    Confirm_Molo_Selection: [1x1 UIControl]
+                     text3: [1x1 UIControl]
+          Threshold_Slider: [1x1 UIControl]
+                     axes1: [1x1 Axes]
+                    output: [1x1 Figure]
+                      path: 'Y:\ZeptoDATA\Images\Xueying\20151019\B5\11_SAv-DNA_1-2_cDNA_regen'
+                 filenames: [1400x1 struct]
+             current_image: [766x510 uint16]
+          points_to_delete: {}
+             points_to_add: {}
+                moloVector: {}
+
+
+sliderStep =
+
+   1.0e-03 *
+
+    0.7148    0.7148
+
+>> 

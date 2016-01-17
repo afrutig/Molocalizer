@@ -1,0 +1,39 @@
+Error using matlab.ui.Figure/get
+Invalid or deleted object.
+
+Error in alternatePrintPath>LocalIsPaperPositionModeAuto (line 1313)
+
+
+
+Error in alternatePrintPath>LocalTryGetframeWithDecorationsShortcut (line 1493)
+
+
+
+Error in alternatePrintPath (line 88)
+
+
+
+Error in print (line 215)
+    pj = alternatePrintPath(pj);
+
+Error in export_chemical_integrities (line 40)
+    print(figure1,name,'-dpng')
+
+Error in Molocalizer>save_data (line 1172)
+            export_chemical_integrities(handles,algorithms{i});
+
+Error in Molocalizer>Save_all_data_Callback (line 1113)
+save_data(handles)
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in Molocalizer (line 46)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in @(hObject,eventdata)Molocalizer('Save_all_data_Callback',hObject,eventdata,guidata(hObject))
+
+ 
+Error while evaluating DestroyedObject Callback
+
+>> 
