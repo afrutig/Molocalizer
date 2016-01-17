@@ -41,7 +41,7 @@ function export_chemical_integrities(handles,algorithm)
     
     print(figure1,name,'-dpng')
     
-    csvwrite_with_headers(strcat(handles.path,'/Evaluation/csv_files/', handles.experiment_name, '_', algorithm, '_chemical_integrities.txt'),chemical_integrities_csv,header);
+    csvwrite(strcat(handles.path,'/Evaluation/csv_files/', handles.experiment_name, '_', algorithm, '_chemical_integrities.txt'),chemical_integrities_csv);
     save(strcat(handles.path,'/Evaluation/mat_files/', handles.experiment_name, '_', algorithm, '_chemical_integrities.mat'),'chemical_integrity_matrix');
 
 

@@ -54,7 +54,7 @@ function export_background_signals(handles,algorithm)
     
     print(figure1,name,'-dpng')
     
-    csvwrite_with_headers(strcat(handles.path,'/Evaluation/csv_files/', handles.experiment_name, '_', algorithm, '_background.txt'),signals_csv,header);
+    csvwrite(strcat(handles.path,'/Evaluation/csv_files/', handles.experiment_name, '_', algorithm, '_background.txt'),signals_csv);
 
 end
 
