@@ -807,6 +807,7 @@ function Log_input_Callback(hObject, eventdata, handles)
 
 
 hilf1 = imfinfo(handles.filenames(1).name);
+
 handles.iniTime = datenum(hilf1.DateTime)*60*60*24;
 
 % get the filename of the current image 

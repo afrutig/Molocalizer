@@ -54,6 +54,8 @@ for i = 1:size(molo,1)
             % That is right... all the signals need to be the square root.
 
             molo(i,j).chemical_integrities = 1.0/(avg_upper_sqrt);
+
+            % this is how you get from the square root signal to the normalized molographic signal. 
             molo(i,j).norm_signal = molo(i,j).sqrt_signal*molo(i,j).chemical_integrities*Norm_Conc;
         
         
