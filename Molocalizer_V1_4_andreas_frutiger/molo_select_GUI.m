@@ -289,8 +289,7 @@ function Pixelsize_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.pixelsize = str2double(get(hObject,'String'));
-handles.radius = handles.radius_um/handles.pixelsize;
-
+handles.radius = handles.radius_um/handles.pixelsize
 % Hints: get(hObject,'String') returns contents of Pixelsize as text
 %        str2double(get(hObject,'String')) returns contents of Pixelsize as a double
 

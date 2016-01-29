@@ -126,6 +126,7 @@ function handles = initialize_handles_structure(handles)
     handles.dynamic_plotting = false;
     handles.molo = struct;
     handles.time = [];
+    handles.Injection_times = []; % vector that stores the injection time values.
     
     handles.Processed_image_button_clicked = false;
     
@@ -354,6 +355,44 @@ function Process_new_images_Callback(hObject, eventdata, handles)
 guidata(hObject, handles);
 
 
+function handles = calculate_injection_times(handles)
+% this function calculates the injection times, if the file Injection log
+% exists, the injection times are stored in the the file Injection
+% Log_processed
+
+% Check if the injection time file exists:
+
+if exist([handles.path '/Evaluation/Injection_log.txt'],'file')
+
+    % read the values from the file
+    
+    a = importdata([handles.path '/Evaluation/Injection_log.txt'],';');
+
+    handles.Injection_times = zeros(1,length(a));
+
+    % calculate the injection time from handles.iniTime
+    
+    for i=1:length(a)
+
+        hilf = strsplit(a{i},';');
+
+        handles.Injection_times(i) = datenum(hilf(2),'dd-mmm-yyyy HH:MM:SS')*60*60*24;
+
+    end
+
+    handles.Injection_times = handles.Injection_times - handles.iniTime
+    
+
+    % save the calculated injection times to the file processed injection
+    % times (in save_data)
+
+    % update axes5 with lines marking the injection times
+    
+end
+
+
+
+
 
 % --- Executes on button press in Start_Dynamic_Plotting.
 function Start_Dynamic_Plotting_Callback(hObject, eventdata, handles)
@@ -417,7 +456,10 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
         
         hilf = handles.filenames(1).name;
         hilf2 = imfinfo(hilf);
-        handles.iniTime = datenum(hilf2.DateTime)*60*60*24;
+        % the raspipi camera has a different field for the DateTime, it is
+        % called: FileModDate, the format is also different: 'dd-mmm-yyyy HH:MM:SS'
+        handles.iniTime = datenum(hilf2.DateTime,'dd.mmm.yyyy HH:MM:SS')*60*60*24;
+
         
     end
     
@@ -486,7 +528,7 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
             end
 
             handles.filenumbers(i) = str2num(hilf{1});
-            handles.time(i) = datenum(hilf2.DateTime)*60*60*24 - handles.iniTime;
+            handles.time(i) = datenum(hilf2.DateTime,'dd.mmm.yyyy HH:MM:SS')*60*60*24 - handles.iniTime;
         
 
 
@@ -620,11 +662,12 @@ for j = 1:handles.number_of_mololines
     
 end
 
+limits = ylim;
 if isfield(handles,'Norm_Lower_pos')
     
     % if the user has selected the lower normalization area, then visualize
     % it with a blue box of transparency 50.
-    limits = ylim;
+ 
     patch([handles.Norm_Lower_pos(1) handles.Norm_Lower_pos(1) handles.Norm_Lower_pos(2) handles.Norm_Lower_pos(2)],[limits(1) limits(2) limits(2) limits(1)],'blue','FaceAlpha',.3,'EdgeColor','None')
     
 
@@ -634,10 +677,24 @@ if isfield(handles,'Norm_Upper_pos')
     
     % if the user has selected the lower normalization area, then visualize
     % it with a blue box of transparency 50.
-    limits = ylim;
     patch([handles.Norm_Upper_pos(1) handles.Norm_Upper_pos(1) handles.Norm_Upper_pos(2) handles.Norm_Upper_pos(2)],[limits(1) limits(2) limits(2) limits(1)],'blue','FaceAlpha',.3,'EdgeColor','None')
     
 
+end
+
+
+
+% draw the injection time points as vertical lines
+
+if length(handles.Injection_times) > 0
+   
+    for i = 1:length(handles.Injection_times)
+        
+        patch([handles.Injection_times(i) handles.Injection_times(i) handles.Injection_times(i) handles.Injection_times(i)],[limits(1) limits(2) limits(2) limits(1)],'blue','EdgeColor','blue')
+    
+        
+    end 
+    
 end
 
 hold off
@@ -646,7 +703,7 @@ hold off
 function handles = update_Datavisualization(handles)
 % this function updates the Data Visualization Panel.
 
-
+handles = calculate_injection_times(handles);
 handles = update_Axes_Molosignals(handles);
 
 
@@ -808,7 +865,7 @@ function Log_input_Callback(hObject, eventdata, handles)
 
 hilf1 = imfinfo(handles.filenames(1).name);
 
-handles.iniTime = datenum(hilf1.DateTime)*60*60*24;
+handles.iniTime = datenum(hilf1.DateTime,'dd.mmm.yyyy HH:MM:SS')*60*60*24;
 
 % get the filename of the current image 
 hilf2 = imfinfo(handles.filenames(round(get(handles.scan_through_data,'Value'))).name);
@@ -816,7 +873,7 @@ hilf2 = imfinfo(handles.filenames(round(get(handles.scan_through_data,'Value')))
            
 % I need to sort the console content...
 
-handles.Consolecontent = [strcat(get(hObject,'String'),' , ',num2str(datenum(hilf2.DateTime)),', Time [s]: ', num2str(datenum(hilf2.DateTime)*60*60*24 - handles.iniTime)) handles.Consolecontent ];
+handles.Consolecontent = [strcat(get(hObject,'String'),' , ',num2str(datenum(hilf2.DateTime)),', Time [s]: ', num2str(datenum(hilf2.DateTime,'dd.mmm.yyyy HH:MM:SS')*60*60*24 - handles.iniTime)) handles.Consolecontent ];
 
 set(handles.Console_Output,'String',handles.Consolecontent);
 % Hints: get(hObject,'String') returns contents of Log_input as text
@@ -1339,6 +1396,8 @@ end
 
 
 save_datalog(handles);
+
+save_processed_log_in(handles); % saves the processed injection log
  
 set(handles.Save_all_data,'BackgroundColor',[0 1 0]);
  
@@ -1405,7 +1464,7 @@ function Load_Experiment_Callback(hObject, eventdata, handles)
         
         load(strcat(hilf_path,'/Evaluation/Experimental_data_for_reload_of_experiment.mat'));
         
-        handles.path = hilf_path; % because the path was reloaded from the mat file
+       
         
         names = fieldnames(data_to_export)
    
@@ -1418,6 +1477,10 @@ function Load_Experiment_Callback(hObject, eventdata, handles)
                 handles.(name) = data_to_export.(name);
 
         end
+        
+        iniTime = handles.iniTime
+        
+        handles.path = hilf_path; % because the path was reloaded from the mat file
         
         set(handles.scan_through_data,'Min',1);
         set(handles.scan_through_data,'Max',length(handles.filenames));
@@ -1437,8 +1500,6 @@ function Window_control_Callback(hObject, eventdata, handles)
 % hObject    handle to Process_Toolbar (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
 
 
 
@@ -1671,6 +1732,8 @@ function Start_Injection_logging_Callback(hObject, eventdata, handles)
 a = sprintf('matlab  -r -nosplash -nodesktop "addpath(genpath(pwd));log_injection(''%s'')" &',handles.path);
 
 unix(a)
+
+
 
 
 

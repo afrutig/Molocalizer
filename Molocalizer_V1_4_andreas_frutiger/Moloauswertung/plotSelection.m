@@ -1,5 +1,5 @@
 function plotSelection(handles)
-    
+% plots the molospots
 % this needs to be a separate function that plots the molospots
 
 axes(handles.axes1);
@@ -26,7 +26,7 @@ end
 % plot the moloVector
 for i=1:length(handles.moloVector)
     
-    viscircles(handles.moloVector{i}, 10,'EdgeColor','g','LineWidth',2,'DrawBackgroundCircle',false);
+    viscircles(handles.moloVector{i}, 50,'EdgeColor','g','LineWidth',2,'DrawBackgroundCircle',false);
     
 end
 
