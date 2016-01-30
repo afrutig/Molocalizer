@@ -81,7 +81,7 @@ set(handles.image_selector, 'SliderStep',sliderStep);
 imagesc(handles.current_image);
 
 
-update_axis1(handles)
+handles = update_axis1(handles)
 
 set(handles.Confirm_Molo_Selection,'BackgroundColor',[1 0 0]);
 set(handles.Select_Background_Area,'BackgroundColor',[1 0 0]);
@@ -125,7 +125,7 @@ function Threshold_Slider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-update_axis1(handles)
+handles = update_axis1(handles)
 
 set(handles.Confirm_Molo_Selection,'BackgroundColor',[1 0 0]);
 set(handles.Select_Background_Area,'BackgroundColor',[1 0 0]);
@@ -162,14 +162,14 @@ get(hObject,'Value')
 % per default display the last image
 handles.current_image = imread(handles.filenames(round(get(hObject,'Value'))).name);
 imagesc(handles.current_image);
-update_axis1(handles)
+handles = update_axis1(handles)
 
 set(handles.MoloLocationsConfirmed,'BackgroundColor',[1 0 0]);
 
 
 guidata(hObject, handles);
 
-function update_axis1(handles)
+function handles = update_axis1(handles)
 
 cla(handles.axes1)
 [handles.image_above_threshold,handles.centroids] = getMoloSpots(handles.current_image,handles.Threshold_Slider);
@@ -256,7 +256,7 @@ handles.points_to_add{end+1} = point;
 % handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
 
 % plotSelection(handles);
-update_axis1(handles)
+handles = update_axis1(handles)
 
 
 guidata(hObject, handles);
@@ -288,7 +288,7 @@ end
 
 handles.points_to_delete{end+1} = point;
 
-update_axis1(handles)
+handles = update_axis1(handles)
 %handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
 %plotSelection(handles);
 
@@ -304,7 +304,7 @@ handles.radius = handles.radius_um/handles.pixelsize
 % Hints: get(hObject,'String') returns contents of Pixelsize as text
 %        str2double(get(hObject,'String')) returns contents of Pixelsize as a double
 %plotSelection(handles);
-update_axis1(handles)
+handles = update_axis1(handles)
 
 guidata(hObject, handles);
 
@@ -338,7 +338,7 @@ handles.MoloArea = getrect(handles.axes1);
 
 % handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
 % plotSelection(handles);
-update_axis1(handles)
+handles = update_axis1(handles)
 
 guidata(hObject, handles);
 
@@ -357,7 +357,6 @@ hilf = cell2mat(handles.moloVector);
 x_coord = hilf(1:2:end-1);
 hilf = cell2mat(handles.moloVector);
 y_coord = hilf(2:2:end);
-
 
 % do the clustering of the data into as many lines, as the value of number of mololines.
 clustered_data = kmeans(y_coord',handles.number_of_mololines);
@@ -443,7 +442,7 @@ function Select_Background_Area_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles.Background_Area = getrect(handles.axes1);
-update_axis1(handles)
+handles = update_axis1(handles)
 
 set(handles.Select_Background_Area,'BackgroundColor',[0 1 0]);
 
