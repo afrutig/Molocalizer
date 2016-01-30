@@ -24,8 +24,7 @@ s = regionprops(image_above_threshold,'centroid');
 
 centroids = cat(1, s.Centroid);
 
-centroids
-size(centroids)
+
 
 if isempty(centroids)
     

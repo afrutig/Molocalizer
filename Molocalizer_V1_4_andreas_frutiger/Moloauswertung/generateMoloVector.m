@@ -8,8 +8,7 @@ function moloVector = generateMoloVector(centroids,points_to_add,points_to_delet
 % always initialize the molovector new. 
 
 moloVector = {};
-size(centroids)
-centroids
+
 for k = 1:length(centroids(:,1))
   
     moloVector{end+1} = [centroids(k,1) centroids(k,2)];
@@ -117,6 +116,11 @@ for i = 1:length(moloVector)
 end
 
 moloVector(index_to_remove) = [];
+
+
+
+
+
 
 % this was an algorithm that detected overlapping spots, this should be
 % adapted for the molovector. 

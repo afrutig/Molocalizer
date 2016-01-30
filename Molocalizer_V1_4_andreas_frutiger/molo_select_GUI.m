@@ -22,7 +22,7 @@ function varargout = molo_select_GUI(varargin)
 
 % Edit the above text to modify the response to help molo_select_GUI
 
-% Last Modified by GUIDE v2.5 29-Oct-2015 09:58:59
+% Last Modified by GUIDE v2.5 29-Jan-2016 15:21:00
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -81,11 +81,10 @@ set(handles.image_selector, 'SliderStep',sliderStep);
 imagesc(handles.current_image);
 
 
-[handles.image_above_threshold,handles.centroids] = getMoloSpots(handles.current_image,handles.Threshold_Slider);
-handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
-plotSelection(handles);
+update_axis1(handles)
 
-set(handles.MoloLocationsConfirmed,'BackgroundColor',[1 0 0]);
+set(handles.Confirm_Molo_Selection,'BackgroundColor',[1 0 0]);
+set(handles.Select_Background_Area,'BackgroundColor',[1 0 0]);
 
 
 % Update handles structure
@@ -126,11 +125,10 @@ function Threshold_Slider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-[handles.image_above_threshold,handles.centroids] = getMoloSpots(handles.current_image,handles.Threshold_Slider);
-handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
-plotSelection(handles);
+update_axis1(handles)
 
-set(handles.MoloLocationsConfirmed,'BackgroundColor',[1 0 0]);
+set(handles.Confirm_Molo_Selection,'BackgroundColor',[1 0 0]);
+set(handles.Select_Background_Area,'BackgroundColor',[1 0 0]);
 
 
 guidata(hObject, handles);
@@ -164,15 +162,26 @@ get(hObject,'Value')
 % per default display the last image
 handles.current_image = imread(handles.filenames(round(get(hObject,'Value'))).name);
 imagesc(handles.current_image);
-
-[handles.image_above_threshold,handles.centroids] = getMoloSpots(handles.current_image,handles.Threshold_Slider);
-handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
-plotSelection(handles);
+update_axis1(handles)
 
 set(handles.MoloLocationsConfirmed,'BackgroundColor',[1 0 0]);
 
 
 guidata(hObject, handles);
+
+function update_axis1(handles)
+
+cla(handles.axes1)
+[handles.image_above_threshold,handles.centroids] = getMoloSpots(handles.current_image,handles.Threshold_Slider);
+handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
+plotSelection(handles);
+
+if isfield(handles,'Background_Area')
+    rectangle('Position',handles.Background_Area)
+
+end
+
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -244,9 +253,10 @@ end
 
 handles.points_to_add{end+1} = point;
 
-handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
+% handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
 
-plotSelection(handles);
+% plotSelection(handles);
+update_axis1(handles)
 
 
 guidata(hObject, handles);
@@ -278,8 +288,9 @@ end
 
 handles.points_to_delete{end+1} = point;
 
-handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
-plotSelection(handles);
+update_axis1(handles)
+%handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
+%plotSelection(handles);
 
 guidata(hObject, handles);
 
@@ -292,6 +303,8 @@ handles.pixelsize = str2double(get(hObject,'String'));
 handles.radius = handles.radius_um/handles.pixelsize
 % Hints: get(hObject,'String') returns contents of Pixelsize as text
 %        str2double(get(hObject,'String')) returns contents of Pixelsize as a double
+%plotSelection(handles);
+update_axis1(handles)
 
 guidata(hObject, handles);
 
@@ -323,8 +336,9 @@ function Select_Molo_Area_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 handles.MoloArea = getrect(handles.axes1);
 
-handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
-plotSelection(handles);
+% handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
+% plotSelection(handles);
+update_axis1(handles)
 
 guidata(hObject, handles);
 
@@ -381,7 +395,8 @@ end
 
    confirmedMoloSpots = handles.confirmedMoloSpots;
    
-   set(handles.MoloLocationsConfirmed,'BackgroundColor',[0 1 0]);
+   set(handles.Confirm_Molo_Selection,'BackgroundColor',[0 1 0]);
+ 
    
    % save the Molo
 
@@ -393,6 +408,7 @@ end
    Molocalizer();
    
 guidata(hObject, handles);
+
 
 
 
@@ -416,5 +432,19 @@ handles.number_of_mololines = str2double(get(hObject,'String'));
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+guidata(hObject, handles);
+
+
+% --- Executes on button press in Select_Background_Area.
+function Select_Background_Area_Callback(hObject, eventdata, handles)
+% hObject    handle to Select_Background_Area (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.Background_Area = getrect(handles.axes1);
+update_axis1(handles)
+
+set(handles.Select_Background_Area,'BackgroundColor',[0 1 0]);
 
 guidata(hObject, handles);
