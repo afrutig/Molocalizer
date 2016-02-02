@@ -46,10 +46,10 @@ opts.StartPoint = [damping_profile(1)-damping_profile(end),(damping_profile(1)-m
 % Fit model to data.
 
 [fitresult] = fit(prop_distance', damping_profile', ft, opts );
-coeffvals = coeffvalues(fitresult);
+coeffvals = coeffvalues(fitresult)
 % coeffvals(2)
-%figure;
-%plot(fitresult,prop_distance,damping_profile)
+figure;
+plot(fitresult,prop_distance,damping_profile)
 
 % for conversion into dB/cm
 10*log(coeffvals(2)*10000);

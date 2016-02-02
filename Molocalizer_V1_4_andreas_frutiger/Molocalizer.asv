@@ -502,6 +502,8 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
 
             [handles.cut_molocircles,handles.pixel_per_um] = cut_Molo_circles(handles.confirmedMoloSpots,handles.current_image);
             
+                
+            handles.damping_constant = cut_background_region_and_calculate_damping_of_waveguide(handles.Background_Area,handles.current_image,handles.pixel_per_um);
             % the next two lines are only for the intermediate storage of
             % the cut molocircles.
             
@@ -519,7 +521,7 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
             [signals, backgrounds] = process_molocircles(handles.cut_molocircles,options);
             % Here I can now calculate the mass loading of a mologram. 
             
-            
+            surface_mass_densities_mod = calculate_surface_mass_density(signals,backgrounds,handles.damping_constant);
 
 
             % this is dangerous, two different indices mechanisms...
@@ -530,7 +532,8 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
                     % these structures are not initialized yet...
                     handles.molo(j,k).signal(i) = signals(j,k);
                     handles.molo(j,k).background(i) = backgrounds(j,k);
-
+                    handles.molo(j,k).surface_mass_densities_mod(i) = surface_mass_densities_mod(j,k);
+                    
                 end
             end
 
@@ -577,8 +580,6 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
         handles.molo = calc_chemical_integrities(handles.Norm_Upper_ind_confirmed,handles.molo);
         handles.molo = calc_normalized_signal_dim_less(handles.molo);
         handles.molo = calc_normalized_signal(handles.molo,handles.Norm_Conc);
-        handles.molo = calculate_surface_mass_density(handles.molo,handles.damping_constant);
-        
     end
     
     % here I have to check whether the chemical integrities have been
@@ -1202,10 +1203,10 @@ handles.Norm_Conc = str2num(get(handles.mu_molar_strept_ref,'String'));
 
 % here I need to calculate the damping constant
 
-damping_constants = zeros(length(handles.Norm_Lower_ind_confirmed(1):handles.Norm_Lower_ind_confirmed(2)),1)
+damping_constants = zeros(length(handles.Norm_Lower_pos(1):handles.Norm_Lower_pos(2)),1)
 
 j = 1
-for i = handles.Norm_Lower_ind_confirmed(1):handles.Norm_Lower_ind_confirmed(2)
+for i = handles.Norm_Lower_pos(1):handles.Norm_Lower_pos(2)
     
             hilf = handles.filenames(i).name;
             
@@ -1225,7 +1226,7 @@ handles.molo = calc_sqrt_signals(handles.molo);
 handles.molo = calc_chemical_integrities(handles.Norm_Upper_ind_confirmed,handles.molo);
 handles.molo = calc_normalized_signal_dim_less(handles.molo);
 handles.molo = calc_normalized_signal(handles.molo,handles.Norm_Conc);
-handles.molo = calculate_surface_mass_density(handles.molo,handles.damping_constant);
+
 
 
 handles.axes_data_display = 'norm_signal';
