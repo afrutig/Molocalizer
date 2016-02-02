@@ -25,7 +25,7 @@ function varargout = Molocalizer(varargin)
 
 % Edit the above text to modify the response to help Molocalizer
 
-% Last Modified by GUIDE v2.5 17-Jan-2016 10:34:39
+% Last Modified by GUIDE v2.5 31-Jan-2016 14:41:15
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -97,9 +97,11 @@ if  isappdata(0,'confirmedMoloSpots')
     set(handles.molo_loc_confirmed,'BackgroundColor',[0 1 0]);
     handles.confirmedMoloSpots = getappdata(0,'confirmedMoloSpots');
     handles.number_of_mololines = getappdata(0,'number_of_mololines');
+    handles.Background_Area = getappdata(0,'Background_Area');
     rmappdata(0,'confirmedMoloSpots');
     rmappdata(0,'number_of_mololines');
-
+    rmappdata(0,'Background_Area');
+   
 else
     set(handles.molo_loc_confirmed,'BackgroundColor',[1 0 0]);
 end
@@ -239,6 +241,7 @@ handles.current_image = imread(handles.filenames(end).name);
 
 mkdir(strcat(handles.path,'/Evaluation'));
 mkdir(strcat(handles.path,'/Evaluation/Cut_Images'));
+mkdir(strcat(handles.path,'/Evaluation/Cut_Background_Images'));
 mkdir(strcat(handles.path,'/Evaluation/mat_files'));
 mkdir(strcat(handles.path,'/Evaluation/csv_files'));
 mkdir(strcat(handles.path,'/Evaluation/Plots'));
@@ -497,10 +500,14 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
             hilf = (first_split{end});
             hilf = strsplit(hilf,'.');
 
-            handles.cut_molocircles = cut_Molo_circles(handles.confirmedMoloSpots,handles.current_image);
+            [handles.cut_molocircles,handles.pixel_per_um] = cut_Molo_circles(handles.confirmedMoloSpots,handles.current_image);
             
-            % the next two lines are only for 
-            cut_molocircles = handles.cut_molocircles;
+            
+            handles.damping_constant = cut_background_region_and_calculate_damping_of_waveguide(handles.Background_Area,handles.current_image,handles.pixel_per_um);
+            % the next two lines are only for the intermediate storage of
+            % the cut molocircles.
+            
+            % cut_molocircles = handles.cut_molocircles;
             % save(strcat(handles.path,'/Evaluation/Cut_Images/moloimages_',num2str(i),'.mat'),'cut_molocircles')
             
             
@@ -512,7 +519,9 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
 
             end
             [signals, backgrounds] = process_molocircles(handles.cut_molocircles,options);
-        
+            % Here I can now calculate the mass loading of a mologram. 
+            
+            surface_mass_densities_mod = calculate_surface_mass_density(signals,backgrounds,handles.damping_constant);
 
 
             % this is dangerous, two different indices mechanisms...
@@ -523,6 +532,7 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
                     % these structures are not initialized yet...
                     handles.molo(j,k).signal(i) = signals(j,k);
                     handles.molo(j,k).background(i) = backgrounds(j,k);
+                    handles.molo(j,k).surface_mass_densities_mod(i) = surface_mass_densities_mod(j,k);
                     
                 end
             end
@@ -538,8 +548,6 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
     % normalized signals. 
     if isfield(handles,'chemical_integrities_loaded')
        
-       
-        
        if isfield(handles.molo_algo_data.(handles.algorithm)(1,1),'molo_offset')
            
             for j = 1:size(handles.molo_algo_data.(handles.algorithm),1)
@@ -555,7 +563,6 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
             
            
            handles.Norm_Conc
-           
            handles.molo = calc_sqrt_signals(handles.molo);
            handles.molo = calc_normalized_signal_dim_less(handles.molo);
            handles.molo = calc_normalized_signal(handles.molo,handles.Norm_Conc);
@@ -564,9 +571,10 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
        
     end
     
-    
+    % the damping constant needs to be calculated in Confirm Norm Selection here I only update the new surface mass densities, if I get new images (handles.damping_constant is defined in this case.) 
     
     if isfield(handles,'Norm_Lower_ind_confirmed')
+        
         
         handles.molo = calc_offset(handles.Norm_Lower_ind_confirmed,handles.molo);
         handles.molo = calc_sqrt_signals(handles.molo);
@@ -654,6 +662,13 @@ for j = 1:handles.number_of_mololines
             plot(handles.time,real(handles.molo(j,i).norm_signal),'Linewidth',1,'Color',styles(j),'UserData',[num2str(j) ',' num2str(i)]);
             xlabel('Time [s]');
             ylabel('MoloSignal [uM Strept]');
+          
+           case 'surface_mass_densities'
+              
+            plot(handles.time,real(handles.molo(j,i).surface_mass_densities_mod),'Linewidth',1,'Color',styles(j),'UserData',[num2str(j) ',' num2str(i)]);
+            xlabel('Time [s]');
+            ylabel('$\Gamma_\Delta$ [pg/mm^2]','interpreter','tex');
+            
         end
         
 
@@ -820,6 +835,10 @@ switch handles.algorithm
           case 'norm_signal'
             
             set(handles.Axes_Control,'Value',3);
+            
+          case 'surface_mass_densities'
+              
+            set(handles.Axes_Control,'Value',4);
               
       end
       
@@ -1231,8 +1250,8 @@ function Algorithm_select_Callback(hObject, eventdata, handles)
           case 3
             
             handles.molo = handles.molo_algo_data.maximum_vs_background
-            handles.molo
             handles.algorithm = 'maximum_vs_background';
+             
      
             
 
@@ -1291,6 +1310,8 @@ select_value = get(handles.Axes_Control,'Value');
           case 3
               
             handles.axes_data_display = 'norm_signal';
+          case 4
+            handles.axes_data_display = 'surface_mass_densities';  
       end
       
        handles = update_Datavisualization(handles);
@@ -1732,8 +1753,3 @@ function Start_Injection_logging_Callback(hObject, eventdata, handles)
 a = sprintf('matlab  -r -nosplash -nodesktop "addpath(genpath(pwd));log_injection(''%s'')" &',handles.path);
 
 unix(a)
-
-
-
-
-

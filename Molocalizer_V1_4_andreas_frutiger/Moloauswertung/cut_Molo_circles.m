@@ -1,4 +1,4 @@
-function image_circles = cut_Molo_circles(confirmedMoloSpots,image)
+function [image_circles,pixel_per_um] = cut_Molo_circles(confirmedMoloSpots,image)
 %cut_Molo_circles: %   This function cuts out circles around the molographic foci positions
 %   with a radius equal to the radius of the underlying mologram. 
 
@@ -16,9 +16,10 @@ function image_circles = cut_Molo_circles(confirmedMoloSpots,image)
 % image are marked as NaN values in the array.
 
 
-diameter = [400 400 400];
+diameter = [400 400 400]; % this is the diameter of the molograms in the three lines. 
 
-% first convert the um in pixels
+% first convert the um in pixels/automatically measures the molographic
+% spot seperation, because it is known to be 400 um
 
 pixel_per_um = sqrt((confirmedMoloSpots(1).x_coord(1) - confirmedMoloSpots(1).x_coord(2))^2+(confirmedMoloSpots(1).y_coord(1) - confirmedMoloSpots(1).y_coord(2))^2)/400;
 
@@ -32,8 +33,6 @@ for i = 1:length(confirmedMoloSpots)
    
 
     % get the square images
-    
-   
     
     for j = 1:length(confirmedMoloSpots(i).x_coord)
         

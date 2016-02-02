@@ -85,6 +85,7 @@ handles = update_axis1(handles)
 
 set(handles.Confirm_Molo_Selection,'BackgroundColor',[1 0 0]);
 set(handles.Select_Background_Area,'BackgroundColor',[1 0 0]);
+set(handles.Select_Molo_Area,'BackgroundColor',[1 0 0]);
 
 
 % Update handles structure
@@ -164,7 +165,7 @@ handles.current_image = imread(handles.filenames(round(get(hObject,'Value'))).na
 imagesc(handles.current_image);
 handles = update_axis1(handles)
 
-set(handles.MoloLocationsConfirmed,'BackgroundColor',[1 0 0]);
+set(handles.Confirm_Molo_Selection,'BackgroundColor',[1 0 0]);
 
 
 guidata(hObject, handles);
@@ -176,8 +177,9 @@ cla(handles.axes1)
 handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
 plotSelection(handles);
 
+% if the background area is selected then display it
 if isfield(handles,'Background_Area')
-    rectangle('Position',handles.Background_Area)
+    rectangle('Position',handles.Background_Area,'EdgeColor','white')
 
 end
 
@@ -339,6 +341,7 @@ handles.MoloArea = getrect(handles.axes1);
 % handles.moloVector = generateMoloVector(handles.centroids,handles.points_to_add,handles.points_to_delete,handles.radius,handles.current_image,handles);
 % plotSelection(handles);
 handles = update_axis1(handles)
+set(handles.Select_Molo_Area,'BackgroundColor',[0 1 0]);
 
 guidata(hObject, handles);
 
@@ -402,8 +405,11 @@ end
    save(strcat(handles.path,'/Evaluation/Confirmed_Molo_Spots_positions.mat'),'confirmedMoloSpots');
    
    number_of_mololines = handles.number_of_mololines;
+   Background_Area = handles.Background_Area;
    setappdata(0,'confirmedMoloSpots',confirmedMoloSpots);
    setappdata(0,'number_of_mololines',number_of_mololines);
+   setappdata(0,'Background_Area',Background_Area);
+   
    Molocalizer();
    
 guidata(hObject, handles);
