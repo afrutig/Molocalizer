@@ -260,12 +260,6 @@ setappdata(0,'data_to_pass_to_other_GUI',data_to_pass_to_other_GUI);
 molo_select_GUI();
 
 
-
-
-
-
-
-
 guidata(hObject, handles);
 
 %% ------ From here the mololocations are confirmed. 
@@ -563,6 +557,7 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
            handles.molo = calc_sqrt_signals(handles.molo);
            handles.molo = calc_normalized_signal_dim_less(handles.molo);
            handles.molo = calc_normalized_signal(handles.molo,handles.Norm_Conc);
+           handles.molo = calc_LOD(handles.Norm_Lower_ind_confirmed,handles.Norm_Upper_ind_confirmed,handles.Norm_Conc, handles.molo)
            
        end
        
@@ -578,6 +573,7 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
         handles.molo = calc_normalized_signal_dim_less(handles.molo);
         handles.molo = calc_normalized_signal(handles.molo,handles.Norm_Conc);
         handles.molo = calculate_surface_mass_density(handles.molo,handles.damping_constant);
+        handles.molo = calc_LOD(handles.Norm_Lower_ind_confirmed,handles.Norm_Upper_ind_confirmed,handles.Norm_Conc, handles.molo)
         
     end
     
@@ -1216,9 +1212,8 @@ for i = handles.Norm_Lower_ind_confirmed(1):handles.Norm_Lower_ind_confirmed(2)
 
 end
 
+
 handles.damping_constant = mean(damping_constants)
-
-
 
 handles.molo = calc_offset(handles.Norm_Lower_ind_confirmed,handles.molo);
 handles.molo = calc_sqrt_signals(handles.molo);
@@ -1226,6 +1221,10 @@ handles.molo = calc_chemical_integrities(handles.Norm_Upper_ind_confirmed,handle
 handles.molo = calc_normalized_signal_dim_less(handles.molo);
 handles.molo = calc_normalized_signal(handles.molo,handles.Norm_Conc);
 handles.molo = calculate_surface_mass_density(handles.molo,handles.damping_constant);
+
+% Calculate a limit of detection for the two normalization regions (an
+% upper and lower LOD.
+handles.molo = calc_LOD(handles.Norm_Lower_ind_confirmed,handles.Norm_Upper_ind_confirmed,handles.Norm_Conc, handles.molo)
 
 
 handles.axes_data_display = 'norm_signal';
@@ -1420,6 +1419,7 @@ for i = 1:length(algorithms)
             export_data_to_csv('norm_signal','MoloSignal [uM Strept]',handles,algorithms{i})
             export_data_to_csv('sqrt_signal','Sqrt(MoloSignal) a.u.',handles,algorithms{i})
             export_chemical_integrities(handles,algorithms{i});
+            export_LOD(handles,algorithms{i});
          
         end
         
