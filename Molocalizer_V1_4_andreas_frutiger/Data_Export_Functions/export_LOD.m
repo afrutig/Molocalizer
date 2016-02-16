@@ -58,7 +58,9 @@ function export_LOD(handles,algorithm)
     name = strcat(handles.path,'/Evaluation/Plots/', algorithm, '_LOD_upper.png');
     
 %     print(figure1,name,'-dpng')
+    'LOD upper Mean'
     mean(LOD_upper_csv(:,3))
+    'LOD upper Std'
     std(LOD_upper_csv(:,3))
     csvwrite(strcat(handles.path,'/Evaluation/csv_files/', handles.experiment_name, '_', algorithm, '_LOD_upper.txt'),LOD_upper_csv);
     save(strcat(handles.path,'/Evaluation/mat_files/', handles.experiment_name, '_', algorithm, '_LOD_upper.mat'),'LOD_upper');
@@ -88,7 +90,9 @@ function export_LOD(handles,algorithm)
     name = strcat(handles.path,'/Evaluation/Plots/', algorithm, '_LOD_lower.png');
     
 %     print(figure1,name,'-dpng')
+    'LOD lower Mean'
     mean(LOD_lower_csv(:,3))
+    'LOD lower Std'
     std(LOD_lower_csv(:,3))
     csvwrite(strcat(handles.path,'/Evaluation/csv_files/', handles.experiment_name, '_', algorithm, '_LOD_lower.txt'),LOD_lower_csv);
     save(strcat(handles.path,'/Evaluation/mat_files/', handles.experiment_name, '_', algorithm, '_LOD_lower.mat'),'LOD_lower');

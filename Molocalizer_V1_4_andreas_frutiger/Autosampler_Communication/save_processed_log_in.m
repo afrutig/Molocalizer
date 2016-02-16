@@ -12,7 +12,7 @@ fid = fopen(strcat(handles.path,'/Evaluation/Injection_Log_processed.txt'), 'wt'
 
 for i = 1:length(handles.Injection_times)  
     
-    handles.Injection_times(i)
+    handles.Injection_times(i);
     
     fprintf(fid, '%s\n',strcat(num2str(i),';',num2str(handles.Injection_times(i))));
 
