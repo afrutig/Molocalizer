@@ -25,7 +25,7 @@ function varargout = Molocalizer(varargin)
 
 % Edit the above text to modify the response to help Molocalizer
 
-% Last Modified by GUIDE v2.5 31-Jan-2016 14:41:15
+% Last Modified by GUIDE v2.5 28-Feb-2016 15:42:42
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -557,7 +557,7 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
            handles.molo = calc_sqrt_signals(handles.molo);
            handles.molo = calc_normalized_signal_dim_less(handles.molo);
            handles.molo = calc_normalized_signal(handles.molo,handles.Norm_Conc);
-           handles.molo = calc_LOD(handles.Norm_Lower_ind_confirmed,handles.Norm_Upper_ind_confirmed,handles.Norm_Conc, handles.molo)
+           handles.molo = calc_LOD(handles.Norm_Lower_ind_confirmed,handles.Norm_Upper_ind_confirmed,handles.Norm_Conc, handles.molo);
            
        end
        
@@ -573,7 +573,19 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
         handles.molo = calc_normalized_signal_dim_less(handles.molo);
         handles.molo = calc_normalized_signal(handles.molo,handles.Norm_Conc);
         handles.molo = calculate_surface_mass_density(handles.molo,handles.damping_constant);
-        handles.molo = calc_LOD(handles.Norm_Lower_ind_confirmed,handles.Norm_Upper_ind_confirmed,handles.Norm_Conc, handles.molo)
+        
+        params = struct;
+        
+        params.Norm_Lower_ind_confirmed = handles.Norm_Lower_ind_confirmed;
+        params.Norm_Upper_ind_confirmed = handles.Norm_Upper_ind_confirmed;
+        
+        if isfield(handles,'LOD_fields')
+           
+            params.LOD_fields = handles.LOD_fields;
+            
+        end
+        
+        handles.molo = calc_LOD(params,handles.Norm_Conc, handles.molo)
         
     end
     
@@ -681,6 +693,24 @@ if isfield(handles,'Norm_Lower_pos')
     
 
 end
+
+if isfield(handles,'LOD_fields_no_index')
+    
+    % if the user has selected the lower normalization area, then visualize
+    % it with a blue box of transparency 50.
+    
+  
+    
+    for i = 1:length(handles.LOD_fields_no_index)
+    
+    LOD_fields_no_index = handles.LOD_fields_no_index{i};
+    
+    patch([LOD_fields_no_index(1) LOD_fields_no_index(1) LOD_fields_no_index(2) LOD_fields_no_index(2)],[limits(1) limits(2) limits(2) limits(1)],'green','FaceAlpha',.3,'EdgeColor','None')
+    
+    end
+    
+end
+
 
 if isfield(handles,'Norm_Upper_pos')
     
@@ -1224,7 +1254,20 @@ handles.molo = calculate_surface_mass_density(handles.molo,handles.damping_const
 
 % Calculate a limit of detection for the two normalization regions (an
 % upper and lower LOD.
-handles.molo = calc_LOD(handles.Norm_Lower_ind_confirmed,handles.Norm_Upper_ind_confirmed,handles.Norm_Conc, handles.molo)
+
+params = struct;
+
+params.Norm_Lower_ind_confirmed = handles.Norm_Lower_ind_confirmed;
+params.Norm_Upper_ind_confirmed = handles.Norm_Upper_ind_confirmed;
+
+if isfield(handles,'LOD_fields')
+
+    params.LOD_fields = handles.LOD_fields;
+
+end
+
+        
+handles.molo = calc_LOD(params,handles.Norm_Conc, handles.molo)
 
 
 handles.axes_data_display = 'norm_signal';
@@ -1769,3 +1812,62 @@ function Start_Injection_logging_Callback(hObject, eventdata, handles)
 a = sprintf('matlab  -r -nosplash -nodesktop "addpath(genpath(pwd));log_injection(''%s'')" &',handles.path);
 
 unix(a)
+
+
+% --------------------------------------------------------------------
+function Edit_1_Callback(hObject, eventdata, handles)
+% hObject    handle to Edit_1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function LOD_areas_Callback(hObject, eventdata, handles)
+% hObject    handle to LOD_areas (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[x,y] = ginput(2)
+
+% to convert it to indices
+
+    help = round(x)
+
+
+if isfield(handles,'LOD_fields')
+    
+
+    handles.LOD_fields_no_index{end + 1} = help;
+    handles.LOD_fields{end + 1} = find(help(1) <= handles.time & handles.time <= help(2));
+    
+else 
+    
+    handles.LOD_fields = {};
+    handles.LOD_fields_no_index = {};
+    handles.LOD_fields_no_index{1} = help
+    handles.LOD_fields{1} = find(help(1) <= handles.time & handles.time <= help(2));
+    
+end
+
+
+% im only interested in the x values...
+
+% draw a rectangle with the selection
+
+handles = update_Datavisualization(handles);
+
+
+guidata(hObject,handles)
+
+
+% --------------------------------------------------------------------
+function Clear_LOD_areas_Callback(hObject, eventdata, handles)
+% hObject    handle to Clear_LOD_areas (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+rmfield(handles,'LOD_fields');
+rmfield(handles,'LOD_fields');rmfields(handles,'LOD_fields_no_index');
+
+
+
+guidata(hObject,handles)
