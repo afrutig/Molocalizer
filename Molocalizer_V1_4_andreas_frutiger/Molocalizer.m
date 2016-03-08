@@ -137,6 +137,7 @@ function handles = initialize_handles_structure(handles)
     
     set(handles.molo_loc_confirmed,'BackgroundColor',[1 0 0]);
     
+    
     switch handles.algorithm
           
           case 'std_5_times'
