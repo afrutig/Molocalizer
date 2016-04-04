@@ -23,7 +23,7 @@ function molo = calculate_surface_mass_density(molo,damping_constant)
     if size(molo,1) < 3
 
         msgbox('Number of mololines is less than 3, the diameter calculation might be incorrect for the surface mass density modulation calculation.')
-    
+    end
     
     for j = 1:size(molo,1)
 
