@@ -25,7 +25,7 @@ function varargout = Molocalizer(varargin)
 
 % Edit the above text to modify the response to help Molocalizer
 
-% Last Modified by GUIDE v2.5 28-Feb-2016 16:08:28
+% Last Modified by GUIDE v2.5 12-Apr-2016 20:59:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -461,7 +461,7 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
     end
     
     steps = Endfileindex-Startfileindex;
-    
+
     for i = Startfileindex:Endfileindex
 
 
@@ -483,9 +483,55 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
             first_split = strsplit(hilf,'_');
             hilf = (first_split{end});
             hilf = strsplit(hilf,'.');
+            
 
             [handles.cut_molocircles,handles.pixel_per_um] = cut_Molo_circles(handles.confirmedMoloSpots,handles.current_image);
             
+      
+            % in case the foci are moving during the experiment and the
+            % movement is limited to 400 um then the following lines can be
+            % used in order to track them accurately. 
+            
+          
+            if get(handles.Foci_are_moving,'Value')
+                
+                a = handles.cut_molocircles{1};
+                % if the maximum is three times higher than the mean and the
+                % standard deviation then search for it and put it inside the
+                % middle of the ROI
+            
+                if max(a(:)) > (nanmean(a(:)) + 3*nanstd(a(:)))
+                
+                % get the indices of the maximum
+                [M,I] = max(a(:));
+                [I_row, I_col] = ind2sub(size(a),I);
+
+                % shift all the locations of the confirmed molospots by
+                % this amount
+                s = size(a);
+                shift_y = s(1)/2-I_row;
+                shift_x = s(2)/2-I_col;
+
+                s = size(handles.confirmedMoloSpots);
+
+                    for j = 1:s(2)
+
+                        % b = size(handles.confirmedMoloSpots(1).y_coord)
+
+                        handles.confirmedMoloSpots(j).x_coord = handles.confirmedMoloSpots(j).x_coord - shift_x;
+                        handles.confirmedMoloSpots(j).y_coord = handles.confirmedMoloSpots(j).y_coord - shift_y;
+
+                    end
+
+                [handles.cut_molocircles,handles.pixel_per_um] = cut_Molo_circles(handles.confirmedMoloSpots,handles.current_image);
+
+
+                
+                end
+   	
+            end
+            
+  
             % the next two lines are only for the intermediate storage of
             % the cut molocircles.
             
@@ -1882,3 +1928,12 @@ molo_select_GUI();
 
 
 guidata(hObject,handles)
+
+
+% --- Executes on button press in Foci_are_moving.
+function Foci_are_moving_Callback(hObject, eventdata, handles)
+% hObject    handle to Foci_are_moving (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of Foci_are_moving
