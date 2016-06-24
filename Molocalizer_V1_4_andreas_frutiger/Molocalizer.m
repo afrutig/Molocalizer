@@ -563,7 +563,7 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
 
                 end
             end
-
+            hilf{1}
             handles.filenumbers(i) = str2num(hilf{1});
             handles.time(i) = datenum(hilf2.DateTime,'dd.mmm.yyyy HH:MM:SS')*60*60*24 - handles.iniTime;
         
