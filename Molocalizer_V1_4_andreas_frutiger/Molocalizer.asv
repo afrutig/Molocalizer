@@ -181,33 +181,6 @@ function File_Callback(hObject, eventdata, handles)
 
 function filenames = delete_wrong_images(filenames)
 
-% Check whether the last four digits are a number and remove images that do
-% not belong to this class --> put this in a function
-% remove_non_molo_images
-
-To_delete = [];
-
-for i = 1:length(filenames)
-   
-   
-   first_split = strsplit(filenames(i).name,'_');
-   hilf = (first_split{end});
-   hilf = strsplit(hilf,'.');
-  
-   % check whether all last four digits are numbers
-   if ~all(isstrprop(hilf{1},'digit'))
-       
-       filenames(i).name;
-       To_delete = [To_delete i];
-       
-   end
-   
-end
-
-
-filenames(To_delete) = [];
-
-
 
 % --------------------------------------------------------------------
 function Start_Experiment_Callback(hObject, eventdata, handles)
@@ -267,7 +240,32 @@ set(handles.Loaded_Experiment,'String',strcat('Name: ',handles.experiment_name))
 
 handles.filenames = dir([handles.path,'/Images/*.tif']);
 
-handles.filenames = delete_wrong_images(handles.filenames);
+% Check whether the last four digits are a number and remove images that do
+% not belong to this class --> put this in a function
+% remove_non_molo_images
+
+To_delete = []
+
+for i = 1:length(handles.filenames)
+   
+   
+   first_split = strsplit(handles.filenames(i).name,'_');
+   hilf = (first_split{end});
+   hilf = strsplit(hilf,'.');
+  
+   % check whether all last four digits are numbers
+   if ~all(isstrprop(hilf{1},'digit'))
+       
+       handles.filenames(i).name
+       To_delete = [To_delete i]
+       
+   end
+   
+end
+
+
+handles.filenames(To_delete) = []
+
 
 % get the first tif file in the directory
 handles.filenumbers = get_file_numbers(handles.filenames);
@@ -295,7 +293,7 @@ function Process_all_images_Callback(hObject, eventdata, handles)
 % check here whether the mololocations are confirmed or not... 
 
 handles.filenames = dir([handles.path,'/Images/*.tif']);
-handles.filenames = delete_wrong_images(handles.filenames);
+
 % when images are being added matlab has to update the path structure -->
 % makes execution very slow
 if get(handles.Images_being_added,'Value')
@@ -344,7 +342,6 @@ function Process_new_images_Callback(hObject, eventdata, handles)
 
     old_filenames = handles.filenames; 
     handles.filenames = dir([handles.path,'/Images/*.tif']);
-    handles.filenames = delete_wrong_images(handles.filenames);
     % when images are being added matlab has to update the path structure -->
     % makes execution very slow
     if get(handles.Images_being_added,'Value')
