@@ -27,6 +27,7 @@ function export_LOD(handles,algorithm)
          for k = 1:size(handles.molo_algo_data.(algorithm),2)
              
             index = (j-1)*size(handles.molo_algo_data.(algorithm),2) + k;
+            
             LOD_upper_csv(index,1) = j;
             LOD_upper_csv(index,2) = k;
             LOD_upper_csv(index,3) = handles.molo_algo_data.(algorithm)(j,k).upper_LOD;
@@ -40,8 +41,9 @@ function export_LOD(handles,algorithm)
             if isfield(handles.molo_algo_data.(algorithm)(1,1),'LOD')
             
                 for l = 1:length(handles.molo_algo_data.(algorithm)(1,1).LOD)
-                    
+                    % This loops through all the LOD fields
                     LOD_fields(j,k,l) = handles.molo_algo_data.(algorithm)(j,k).LOD(1);
+                    
                     
                 end
                 
@@ -50,6 +52,18 @@ function export_LOD(handles,algorithm)
                 
          end
          
+    end
+    
+    'LOD field'
+    'Please only calculate it for one LOD field'
+    
+    for l = 1:length(handles.molo_algo_data.(algorithm)(1,1).LOD)
+        % This loops through all the LOD fields and puts the data into the
+        % console
+       mean(mean(LOD_fields))
+       std(std(LOD_fields))
+                    
+                    
     end
     
     % for the standard algorithm Volker did not want to have the
@@ -63,6 +77,8 @@ function export_LOD(handles,algorithm)
     name = strcat(handles.path,'/Evaluation/Plots/', algorithm, '_LOD_upper.png');
     
 %     print(figure1,name,'-dpng')
+    % The LOD is calculated from all three rows of the molographic area.
+    'The LOD is calculated from all three rows of the molographic area:'
     'LOD upper Mean'
     mean(LOD_upper_csv(:,3))
     'LOD upper Std'
