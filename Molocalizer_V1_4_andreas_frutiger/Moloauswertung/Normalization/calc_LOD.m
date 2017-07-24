@@ -21,6 +21,7 @@ if isfield(params,'LOD_fields')
     
 end
 
+LODs = zeros(size(molo))
 
 for i = 1:size(molo,1)
     
@@ -65,13 +66,18 @@ for i = 1:size(molo,1)
             
             molo(i,j).LOD = LOD;
             
-              
+            LODs(i,j) = LOD
+            
             end
             
-
-            
+        
     end
     
+end
+
+if isfield(params,'LOD_fields')
+msgbox(strcat('LOD: mean',num2str(nanmean(nanmean(LODs)))))
+msgbox(strcat('LOD: std',num2str(nanstd(nanstd(LODs)))))
 end
 
 

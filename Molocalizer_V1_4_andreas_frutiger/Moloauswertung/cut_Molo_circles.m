@@ -16,7 +16,7 @@ function [image_circles,pixel_per_um] = cut_Molo_circles(confirmedMoloSpots,imag
 % image are marked as NaN values in the array.
 
 
-diameter = [400 400 400]; % this is the diameter of the molograms in the three lines. 
+diameter = [300 300 300]; % this is the diameter of the molograms in the three lines. 
 
 % first convert the um in pixels/automatically measures the molographic
 % spot seperation, because it is known to be 400 um
