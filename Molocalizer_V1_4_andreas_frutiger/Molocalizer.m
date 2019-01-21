@@ -3,13 +3,13 @@ function varargout = Molocalizer(varargin)
 % Copyright (c) 2015, Andreas Frutiger
 % All rights reserved.
 
-% MOLOCALIZER MATLAB code for Molocalizer.fig
-%      MOLOCALIZER, by itself, creates a new MOLOCALIZER or raises the existing
-%      singleton*.
-%ptionsMOLOCALIZER or the handle to
-%      the existing singleton*.
+%MOLOCALIZER MATLAB code for Molocalizer.fig
+%      MOLO                         CALIZER, by itself, creates a new MOLOCALIZER or raises the existing
+%      singleton*.                            
+%                                                  fthe handle to
+%      the exis                    ting singleton*.
 %
-%      MOLOCALIZER('CALLBACK',hObject,eventData,handles,...) calls the local
+%      MOLOCALIZER('CALLBACK',hObject,eventDaIta,handles,...) calls the local
 %      function named CALLBACK in MOLOCALIZER.M with the given input arguments.
 %
 %      MOLOCALIZER('Property','Value',...) creates a new MOLOCALIZER or raises the
@@ -140,7 +140,7 @@ function handles = initialize_handles_structure(handles)
     
     switch handles.algorithm
           
-          case 'std_5_times'
+          case 'std_3_times'
                 
               set(handles.Algorithm_select,'Value',1);
                 
@@ -343,7 +343,7 @@ function Process_new_images_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
     old_filenames = handles.filenames; 
-    handles.filenames = dir([handles.path,'/Images/*.tif']);
+    handles.filenames = dir([handles.path,'Images/*.tif']);
     handles.filenames = delete_wrong_images(handles.filenames);
     % when images are being added matlab has to update the path structure -->
     % makes execution very slow
@@ -494,7 +494,7 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
     end
     
     steps = Endfileindex-Startfileindex;
-
+    
     for i = Startfileindex:Endfileindex
 
 
@@ -508,7 +508,7 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
                 addpath(genpath(handles.path));
             end
             
-            handles.current_image = imread(strcat('/Images/',hilf));
+            handles.current_image = imread(strcat('Images/',hilf));
             hilf2 = imfinfo(hilf);
 
             % this entire paragraph is for updating the file numbers
@@ -526,7 +526,9 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
             % used in order to track them accurately. 
             
           
-            if get(handles.Foci_are_moving,'Value')
+            if get(handles.Foci_are_moving, 'Value')
+                % I asssume that the shift of all the molospots is the
+                % same.
                 
                 a = handles.cut_molocircles{1};
                 % if the maximum is three times higher than the mean and the
@@ -538,19 +540,30 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
                 % get the indices of the maximum
                 [M,I] = max(a(:));
                 [I_row, I_col] = ind2sub(size(a),I);
+                
+%                 b = a
+%                 
+%                 b(I_row,I_col) = 0
+%                 fig = figure('visible','off')
+%                 pcolor(b)
+% 
+%                 saveas(fig,strcat(handles.path,num2str(i),'.png'))
 
                 % shift all the locations of the confirmed molospots by
                 % this amount
                 s = size(a);
-                shift_y = s(1)/2-I_row;
-                shift_x = s(2)/2-I_col;
+                
+                shift_y = s(1)/2-I_row; % shift in indices in y
+                shift_x = s(2)/2-I_col; % shift in indices in x
 
                 s = size(handles.confirmedMoloSpots);
 
                     for j = 1:s(2)
 
                         % b = size(handles.confirmedMoloSpots(1).y_coord)
-
+                        % handles.confirmedMoloSpots(j).x_coord, 1 x 3
+                        % struct of arrays with the x location of the three
+                        % mologram lines in pixels
                         handles.confirmedMoloSpots(j).x_coord = handles.confirmedMoloSpots(j).x_coord - shift_x;
                         handles.confirmedMoloSpots(j).y_coord = handles.confirmedMoloSpots(j).y_coord - shift_y;
 
@@ -566,14 +579,11 @@ function handles = Process_images_hilf(Startfileindex, Endfileindex, handles)
             
         
             
-            
-            
-  
             % the next two lines are only for the intermediate storage of
             % the cut molocircles.
             
             % cut_molocircles = handles.cut_molocircles;
-            % save(strcat(handles.path,'/Evaluation/Cut_Images/moloimages_',num2str(i),'.mat'),'cut_molocircles')
+            % save(strcat(handles.path,'/Evaluation/Cut_/Images/moloimages_',num2str(i),'.mat'),'cut_molocircles')
             
             
             options.Algorithm = handles.algorithm;
@@ -901,7 +911,7 @@ end
 
 switch handles.algorithm
           
-          case 'std_5_times'
+          case 'std_3_times'
                 
               set(handles.Algorithm_select,'Value',1);
                 
@@ -956,7 +966,7 @@ end
 
     switch handles.algorithm
           
-          case 'std_5_times'
+          case 'std_3_times'
                 
               handles.molo_algo_data.std_5_times = handles.molo;
                 
@@ -1308,7 +1318,7 @@ for i = handles.Norm_Lower_ind_confirmed(1):handles.Norm_Lower_ind_confirmed(2)
     
             hilf = handles.filenames(i).name;
             
-            handles.current_image = imread(strcat('/Images/',hilf));
+            handles.current_image = imread(strcat('Images/',hilf));
             
             damping_constants(j) = cut_background_region_and_calculate_damping_of_waveguide(handles.Background_Area,handles.current_image,handles.pixel_per_um);
             j = j + 1;
@@ -1373,7 +1383,7 @@ function Algorithm_select_Callback(hObject, eventdata, handles)
           case 1
 
            handles.molo = handles.molo_algo_data.std_5_times
-           handles.algorithm =  'std_5_times';
+           handles.algorithm =  'std_3_times';
               
           case 2
             

@@ -60,7 +60,7 @@ function [signal, background] = process_molocircles(image_circles,options)
 %                     
 %                 end
                 
-            case 'std_5_times'
+            case 'std_3_times'
                 % algorithm implemented according to Michael
                 % everything in the image area which is higher than
                 % background + 5 times the standard deviation is a signal
@@ -87,7 +87,7 @@ function [signal, background] = process_molocircles(image_circles,options)
 
                         % this has to be done after the normalization
                         % otherwise I make an error.)
-                        signal(i,j) = nansum(nansum(signal_region(signal_region > (background(i,j)+5*std_img)) - background(i,j)));
+                        signal(i,j) = nansum(nansum(signal_region(signal_region > (background(i,j)+3*std_img)) - background(i,j)));
                         
                         %surf(background_region);
                         %surf(signal_region);
