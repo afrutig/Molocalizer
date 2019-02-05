@@ -343,9 +343,9 @@ function Process_new_images_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
     old_filenames = handles.filenames;
-
-    handles.filenames = dir([handles.path,'/Images/*.tif']);
-
+    old_filenames
+    handles.filenames = dir([handles.path,'Images/*.tif']);
+    handles.filenames
     handles.filenames = delete_wrong_images(handles.filenames);
     % when images are being added matlab has to update the path structure -->
     % makes execution very slow
